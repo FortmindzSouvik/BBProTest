@@ -2,7 +2,7 @@ const catchAsync = require('../utils/catchAsync');
 const { activityService } = require('../services');
 const currentDate = new Date();
 const moment = require('moment');
-const { Food, Water, Step, WorkOut, Weight, Sleep } = require('../models');
+const { Food, Water, Step, WorkOut, Weight, Sleep,Substance } = require('../models');
 
 // Helper function to check if a date is today
 const isToday = (date) => {
@@ -816,6 +816,155 @@ const monthlyWeight = getWeight.filter((weight) => isThisMonth(weight.time));
     });
   
 });
+
+const addSubstance = catchAsync(async (req, res) => {
+  // console.log(req.user,"0000000000000000")
+  let inputData = await req.body;
+  inputData.user_id = await req.user._id;
+  const addSubstance = await activityService.addSubstance(inputData);
+  if (addSubstance) {
+    res.send({
+      code: 201,
+      message: 'Substance added successfully',
+      isSuccess: true,
+      data: addSubstance,
+      // "accessToken": tokens.access.token,
+      // "refreshToken": tokens.refresh.token
+    });
+  } else {
+    res.send({
+      code: 422,
+      message: 'Failed to add substance',
+      isSuccess: false,
+      // "data":addMeal,
+      // "accessToken": tokens.access.token,
+      // "refreshToken": tokens.refresh.token
+    });
+  }
+});
+const getSubstance = catchAsync(async (req, res) => {
+  const substance = await activityService.getSubstanceByUserId({ user_id: req.user._id });
+  if (substance) {
+   
+    res.send({
+      code: 201,
+      message: 'Substance list',
+      isSuccess: true,
+      data:substance,
+      // "accessToken": tokens.access.token,
+      // "refreshToken": tokens.refresh.token
+    });
+  } else {
+    res.send({
+      code: 422,
+      message: 'Failed to get substance',
+      isSuccess: false,
+    });
+  }
+});
+const addCycle = catchAsync(async (req, res) => {
+  // console.log(req.user,"0000000000000000")
+  let inputData = await req.body;
+  inputData.user_id = await req.user._id;
+  const addCycle = await activityService.addCycle(inputData);
+  if (addCycle) {
+    res.send({
+      code: 201,
+      message: 'Cycle added successfully',
+      isSuccess: true,
+      data: addCycle,
+      // "accessToken": tokens.access.token,
+      // "refreshToken": tokens.refresh.token
+    });
+  } else {
+    res.send({
+      code: 422,
+      message: 'Failed to add cycle',
+      isSuccess: false,
+      // "data":addMeal,
+      // "accessToken": tokens.access.token,
+      // "refreshToken": tokens.refresh.token
+    });
+  }
+});
+const getCycleData = catchAsync(async (req, res) => {
+  const cycle = await activityService.getCycleByUserId({ user_id: req.user._id });
+  if (cycle) {
+    const calculateRemainingSubstance = (initialDosage, hours, halfLife) => {
+      return initialDosage * Math.pow(0.5, hours / halfLife);
+    };
+    var finalData =[]
+    for (const singleCycle of cycle) {
+      const substance = await activityService.getById(Substance,{_id: singleCycle.substanceId });
+
+      
+      const halfLife = substance.halfLife; 
+      const dosage = singleCycle.dosage;
+      const frequency = singleCycle.frequency;
+      const servingPeriod = singleCycle.serving; 
+      const startTime = new Date(singleCycle.time);
+
+      const timePeriodMap = {
+        'one_week': 7 * 24,
+        'two_weeks': 14 * 24,
+        'three_weeks': 21 * 24,
+        'one_month': 30 * 24,
+      };
+
+      const totalServingHours = timePeriodMap[servingPeriod];
+      const frequencyMap = {
+        'one_hour': 1,
+        'three_hours': 3,
+        'six_hours': 6,
+        'twelve_hours': 12,
+        'one_day': 24,
+        'two_days': 48,
+        'three_days': 72,
+        'one_week': 168,
+        'two_weeks': 336,
+        'three_weeks': 504,
+        'one_month': 720,
+      };
+
+      const frequencyHours = frequencyMap[frequency];
+
+      let timeData = [];
+      let currentHour = 0;
+      let remainingSubstance = 0;
+
+     while (currentHour <= totalServingHours + 72) {  
+        
+        remainingSubstance = calculateRemainingSubstance(remainingSubstance, 1, halfLife);
+  
+       
+        if (currentHour <= totalServingHours && currentHour % frequencyHours == 0) {
+          remainingSubstance += dosage;
+        }
+        timeData.push({
+          time: new Date(startTime.getTime() + currentHour * 60 * 60 * 1000), 
+          remainingSubstance: Math.max(0, remainingSubstance), 
+        });
+  
+        currentHour++;
+      }
+     await finalData.push(timeData)
+    }
+    res.send({
+      code: 201,
+      message: 'Cycle graph data',
+      isSuccess: true,
+      data:{finalData},
+      // "accessToken": tokens.access.token,
+      // "refreshToken": tokens.refresh.token
+    });
+  } else {
+    res.send({
+      code: 422,
+      message: 'Failed to get cycle',
+      isSuccess: false,
+    });
+  }
+});
 module.exports = {
   addMeal,
   getMealList,
@@ -836,5 +985,9 @@ module.exports = {
   getWeightById,
   getSleepById,
   getProcessData,
-  dashboard
+  dashboard,
+  addSubstance,
+  getSubstance,
+  addCycle,
+  getCycleData
 };

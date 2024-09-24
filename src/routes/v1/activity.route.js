@@ -46,5 +46,9 @@ router.route("/getSleepById").get(auth(),validate(activityValidation.getData),ac
 router.route("/getProgressData").get(auth(),validate(activityValidation.getProgressData),activityController.getProcessData)
 
 router.route("/dashboard").get(auth(),activityController.dashboard)
+router.route("/addSubstance").post(auth(),validate(activityValidation.addSubstance),activityController.addSubstance)
+router.route("/getSubstance").get(auth(),activityController.getSubstance)
+router.route("/addCycle").post(auth(),validate(activityValidation.addCycle),activityController.addCycle)
+router.route("/getCycle").get(auth(),activityController.getCycleData)
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Food,Water,Step,WorkOut,Weight,Sleep } = require('../models');
+const { Food,Water,Step,WorkOut,Weight,Sleep, Substance,Cycle } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const addMeal =async (data) => {
@@ -45,7 +45,7 @@ const addMeal =async (data) => {
  if (!schema || typeof schema.countDocuments !== 'function') {
    throw new Error('Invalid schema provided');
  }
-   const activityData = await schema.findOne(data)
+   const activityData = await schema.findOne(data).exec()
    if (!activityData===0) {
      throw new ApiError(httpStatus.NOT_FOUND, 'Failed to get activity data');
    }
@@ -134,6 +134,39 @@ const addMeal =async (data) => {
    
     return sleep;
   };
+  const addSubstance=async (data) => {
+    const substance = await new Substance(data).save();
+    if (!substance) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Failed to add substance');
+    }
+   
+    return substance;
+  };
+  const getSubstanceByUserId = async (data) => {
+    const substance = await Substance.find(data)
+    if (!substance) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Failed to get substance');
+    }
+   
+    return substance;
+  };
+
+  const addCycle=async (data) => {
+    const cycle = await new Cycle(data).save();
+    if (!cycle) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Failed to add cycle');
+    }
+   
+    return cycle;
+  };
+  const getCycleByUserId = async (data) => {
+    const cycle = await Cycle.find(data)
+    if (!cycle) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Failed to get cycle');
+    }
+   
+    return cycle;
+  };
 module.exports = {
     addMeal,
     getMealByUserId,
@@ -148,5 +181,8 @@ module.exports = {
     addSleep,
     getSleepByUserId,
     getCountByUserId,
-    getById
+    getById,addSubstance,
+    getSubstanceByUserId,
+    addCycle,
+    getCycleByUserId
 }

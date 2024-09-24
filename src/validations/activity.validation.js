@@ -61,6 +61,32 @@ const addSleep = {
     qualityOfSleep:Joi.number().required()
   }),
 };
+
+const addSubstance = {
+  body: Joi.object().keys({
+    name: Joi.string().required(),
+    halfLife: Joi.number().required()
+  }),
+};
+const addCycle = {
+  body: Joi.object().keys({
+    substanceId: Joi.string().required(),
+    dosage: Joi.number().required(),
+    time: Joi.string().required(),
+    serving: Joi.string().required().valid('one_week', 'two_weeks', 'three_weeks', 'one_month'),
+    frequency: Joi.string().required().valid('one_hour',
+        'three_hours',
+        'six_hours',
+        'twelve_hours',
+        'one_day',
+        'two_days',
+        'three_days',
+        'one_week',
+        'two_weeks',
+        'three_weeks',
+        'one_month',)
+  }),
+};
 module.exports = {
     addMeal,
     addWater,
@@ -69,5 +95,7 @@ module.exports = {
     addWeight,
     addSleep,
     getData,
-    getProgressData
+    getProgressData,
+    addSubstance,
+    addCycle
 };
