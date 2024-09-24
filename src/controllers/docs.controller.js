@@ -1,4 +1,6 @@
 const catchAsync = require('../utils/catchAsync');
+const httpStatus = require('http-status');
+
 const { docsService } = require('../services');
 const saveEvent = catchAsync(async (req, res) => {
     const event = await docsService.saveEvent();

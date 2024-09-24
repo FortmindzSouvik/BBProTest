@@ -5,8 +5,8 @@ const { roles } = require('../config/roles');
 const { string } = require('joi');
 const connectionSchema = mongoose.Schema(
   {
-    user_id: {type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'User' },
-    coach_id:{type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'User' },
+    user_id: {type: mongoose.Schema.Types.ObjectId, required: true,ref:'User' },
+    coach_id:{type: mongoose.Schema.Types.ObjectId, required: true,ref:'User' },
     acceptanceStatus:{
         type:Boolean,
         default: false

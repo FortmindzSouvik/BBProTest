@@ -25,7 +25,7 @@ const register = catchAsync(async (req, res) => {
       res
     .status(httpStatus.CREATED)
     .send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'We have sent a verification code to your email for verification',
       isSuccess: true,
       data:user,
@@ -56,7 +56,7 @@ const login = catchAsync(async (req, res) => {
   // const isMatch = await bcrypt.compare(password, user.password);
   if(user){
     const tokens = await tokenService.generateAuthTokens(user);
-    res.send({  code: 201,
+    res.send({  code: httpStatus.CREATED,
       message: 'Login successfully',
       isSuccess: true,
       data:user,
@@ -81,7 +81,7 @@ const createPassword = catchAsync(async (req, res) => {
  let savePassword =  await findUser.save()
 if(savePassword){
   res.send({
-    code: 201,
+    code: httpStatus.CREATED,
   message: 'Password created successfully',
   isSuccess: true,
   // data:user,
@@ -127,7 +127,7 @@ const forgotPassword = catchAsync(async (req, res) => {
         res
       .status(httpStatus.CREATED)
       .send({
-        code: 201,
+        code: httpStatus.CREATED,
         message: 'We have sent a verification code to your email for verification',
         isSuccess: true,
         data:findUser,
@@ -167,7 +167,7 @@ const resetPassword = catchAsync(async (req, res) => {
     res
     .status(httpStatus.CREATED)
     .send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'You have successfully reset your password',
       isSuccess: true,
       data:findUser,

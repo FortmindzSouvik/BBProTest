@@ -1,4 +1,5 @@
 const catchAsync = require('../utils/catchAsync');
+const httpStatus = require('http-status');
 const { activityService } = require('../services');
 const currentDate = new Date();
 const moment = require('moment');
@@ -35,7 +36,7 @@ const addMeal = catchAsync(async (req, res) => {
   const addMeal = await activityService.addMeal(inputData);
   if (addMeal) {
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Meal added successfully',
       isSuccess: true,
       data: addMeal,
@@ -77,7 +78,7 @@ const getMealList = catchAsync(async (req, res) => {
 
     // Return filtered data
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Meal list',
       isSuccess: true,
       data: {
@@ -100,7 +101,7 @@ const getMealById = catchAsync(async(req,res)=>{
     const data = await activityService.getById(Food,{_id:req.query.id})
     if(data){
         res.send({
-            code: 201,
+            code: httpStatus.CREATED,
             message: 'Data',
             isSuccess: true,
             data:data,
@@ -121,7 +122,7 @@ const addWater = catchAsync(async (req, res) => {
   const addWater = await activityService.addWater(inputData);
   if (addWater) {
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Water added successfully',
       isSuccess: true,
       data: addWater,
@@ -156,7 +157,7 @@ const getWaterList = catchAsync(async (req, res) => {
     const weeklyWater = getWater.filter((water) => isThisWeek(water.time));
     const monthlyWater = getWater.filter((water) => isThisMonth(water.time));
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Water list',
       isSuccess: true,
       data: {
@@ -184,7 +185,7 @@ const getWaterById = catchAsync(async(req,res)=>{
     const data = await activityService.getById(Water,{_id:req.query.id})
     if(data){
         res.send({
-            code: 201,
+            code: httpStatus.CREATED,
             message: 'Data',
             isSuccess: true,
             data:data,
@@ -201,7 +202,7 @@ const getStepById = catchAsync(async(req,res)=>{
     const data = await activityService.getById(Step,{_id:req.query.id})
     if(data){
         res.send({
-            code: 201,
+            code: httpStatus.CREATED,
             message: 'Data',
             isSuccess: true,
             data:data,
@@ -218,7 +219,7 @@ const getWorkoutById = catchAsync(async(req,res)=>{
     const data = await activityService.getById(WorkOut,{_id:req.query.id})
     if(data){
         res.send({
-            code: 201,
+            code: httpStatus.CREATED,
             message: 'Data',
             isSuccess: true,
             data:data,
@@ -235,7 +236,7 @@ const getWeightById= catchAsync(async(req,res)=>{
     const data = await activityService.getById(Weight,{_id:req.query.id})
     if(data){
         res.send({
-            code: 201,
+            code: httpStatus.CREATED,
             message: 'Data',
             isSuccess: true,
             data:data,
@@ -252,7 +253,7 @@ const getSleepById= catchAsync(async(req,res)=>{
     const data = await activityService.getById(Sleep,{_id:req.query.id})
     if(data){
         res.send({
-            code: 201,
+            code: httpStatus.CREATED,
             message: 'Data',
             isSuccess: true,
             data:data,
@@ -272,7 +273,7 @@ const addStep = catchAsync(async (req, res) => {
   const addStep = await activityService.addStep(inputData);
   if (addStep) {
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Step added successfully',
       isSuccess: true,
       data: addStep,
@@ -308,7 +309,7 @@ const getStepList = catchAsync(async (req, res) => {
     // Calculate total pages
     const totalPages = Math.ceil(totalCount / limit);
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Step list',
       isSuccess: true,
       data: {
@@ -339,7 +340,7 @@ const addWorkOut = catchAsync(async (req, res) => {
   const addWorkOut = await activityService.addWorkOut(inputData);
   if (addWorkOut) {
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Workout added successfully',
       isSuccess: true,
       data: addWorkOut,
@@ -373,7 +374,7 @@ const getWorkOut = catchAsync(async (req, res) => {
     // Calculate total pages
     const totalPages = Math.ceil(totalCount / limit);
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Workout list',
       isSuccess: true,
       data: {
@@ -404,7 +405,7 @@ const addWeight = catchAsync(async (req, res) => {
   const addWeight = await activityService.addWeight(inputData);
   if (addWeight) {
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Weight added successfully',
       isSuccess: true,
       data: addWeight,
@@ -438,7 +439,7 @@ const getWeight = catchAsync(async (req, res) => {
     // Calculate total pages
     const totalPages = Math.ceil(totalCount / limit);
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Weight list',
       isSuccess: true,
       data: {
@@ -469,7 +470,7 @@ const addSleep = catchAsync(async (req, res) => {
   const sleep = await activityService.addSleep(inputData);
   if (sleep) {
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Sleep added successfully',
       isSuccess: true,
       data: sleep,
@@ -503,7 +504,7 @@ const getSleep = catchAsync(async (req, res) => {
     // Calculate total pages
     const totalPages = Math.ceil(totalCount / limit);
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Sleep list',
       isSuccess: true,
       data: {
@@ -624,7 +625,7 @@ console.log()
 
 
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Process data',
       isSuccess: true,
       data: {
@@ -748,7 +749,7 @@ const monthlyWeight = getWeight.filter((weight) => isThisMonth(weight.time));
 
 
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Dashboard Data',
       isSuccess: true,
       data: {
@@ -824,7 +825,7 @@ const addSubstance = catchAsync(async (req, res) => {
   const addSubstance = await activityService.addSubstance(inputData);
   if (addSubstance) {
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Substance added successfully',
       isSuccess: true,
       data: addSubstance,
@@ -847,7 +848,7 @@ const getSubstance = catchAsync(async (req, res) => {
   if (substance) {
    
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Substance list',
       isSuccess: true,
       data:substance,
@@ -869,7 +870,7 @@ const addCycle = catchAsync(async (req, res) => {
   const addCycle = await activityService.addCycle(inputData);
   if (addCycle) {
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Cycle added successfully',
       isSuccess: true,
       data: addCycle,
@@ -950,7 +951,7 @@ const getCycleData = catchAsync(async (req, res) => {
      await finalData.push(timeData)
     }
     res.send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'Cycle graph data',
       isSuccess: true,
       data:{finalData},

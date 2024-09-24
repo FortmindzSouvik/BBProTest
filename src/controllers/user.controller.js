@@ -29,7 +29,7 @@ const addUserData = catchAsync(async (req, res) => {
     res
     .status(httpStatus.CREATED)
     .send({
-      code: 201,
+      code: httpStatus.CREATED,
       message: 'You have added your data',
       isSuccess: true,
       data:user,
@@ -78,7 +78,7 @@ const uploadCertificate = catchAsync(async (req, res) => {
         res
         .status(httpStatus.CREATED)
         .send({
-          code: 201,
+          code: httpStatus.CREATED,
           message: 'You have added your data',
           isSuccess: true,
         });

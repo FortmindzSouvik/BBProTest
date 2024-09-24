@@ -6,10 +6,10 @@ const { string } = require('joi');
 const reviewSchema = mongoose.Schema(
   {
     reviewTo: {
-       type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'User'
+       type: mongoose.Schema.Types.ObjectId, required: true, ref:'User'
     },
     reviewBy:{
-     type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'User'
+     type: mongoose.Schema.Types.ObjectId, required: true, ref:'User'
     },
     reviewText:{
         type: String,

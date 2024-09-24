@@ -19,7 +19,7 @@ const substanceSchema = mongoose.Schema(
       default:0
     },
     
-    user_id:{type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'User' },
+    user_id:{type: mongoose.Schema.Types.ObjectId, required: true,ref:'User' },
     
   },
   {

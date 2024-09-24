@@ -6,10 +6,10 @@ const { string, date } = require('joi');
 const subscriptionSchema = mongoose.Schema(
   {
     user_id: {
-       type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'User'
+       type: mongoose.Schema.Types.ObjectId, required: true, ref:'User'
     },
     planId:{
-    type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'SubscriptionPlan'
+    type: mongoose.Schema.Types.ObjectId, required: true, ref:'SubscriptionPlan'
     },
     subscriptionId:{
         type: String,

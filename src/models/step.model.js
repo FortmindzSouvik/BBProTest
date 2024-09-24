@@ -14,7 +14,7 @@ const stepSchema = mongoose.Schema(
     endTime:{
         type: Date
     },
-    user_id:{type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'User' },
+    user_id:{type: mongoose.Schema.Types.ObjectId, required: true,ref:'User' },
     
   },
   {
