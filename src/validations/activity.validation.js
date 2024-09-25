@@ -87,6 +87,12 @@ const addCycle = {
         'one_month',)
   }),
 };
+const setGoal = {
+  body: Joi.object().keys({
+    weight: Joi.number().required(),
+    dailyCalories: Joi.number().required()
+  }),
+};
 module.exports = {
     addMeal,
     addWater,
@@ -97,5 +103,6 @@ module.exports = {
     getData,
     getProgressData,
     addSubstance,
-    addCycle
+    addCycle,
+    setGoal
 };

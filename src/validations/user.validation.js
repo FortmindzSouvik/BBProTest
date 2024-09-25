@@ -32,6 +32,12 @@ const addcertificate = {
 
   }),
 };
+const deleteAccount = {
+  body: Joi.object().keys({
+    password:Joi.string().required()
+
+  }),
+};
 const getUsers = {
   query: Joi.object().keys({
     name: Joi.string(),
@@ -74,5 +80,6 @@ module.exports = {
   updateUser,
   deleteUser,
   addUserData,
-  addcertificate
+  addcertificate,
+  deleteAccount
 };

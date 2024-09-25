@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Food,Water,Step,WorkOut,Weight,Sleep, Substance,Cycle } = require('../models');
+const { Food,Water,Step,WorkOut,Weight,Sleep, Substance,Cycle, Goal } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const addMeal =async (data) => {
@@ -159,6 +159,20 @@ const addMeal =async (data) => {
    
     return cycle;
   };
+  const addGoal=async (data) => {
+    const goal = await new Goal(data).save();
+    if (!goal) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Failed to add goal');
+    }
+   
+    return goal;
+  };
+  const updateGoalById = async (id,data) => {
+    const goal = await Goal.updateOne(id,data)
+   
+   
+    return goal;
+  };
   const getCycleByUserId = async (data) => {
     const cycle = await Cycle.find(data)
     if (!cycle) {
@@ -184,5 +198,7 @@ module.exports = {
     getById,addSubstance,
     getSubstanceByUserId,
     addCycle,
-    getCycleByUserId
+    getCycleByUserId,
+    addGoal,
+    updateGoalById
 }

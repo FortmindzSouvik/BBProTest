@@ -50,5 +50,7 @@ router.route("/addSubstance").post(auth(),validate(activityValidation.addSubstan
 router.route("/getSubstance").get(auth(),activityController.getSubstance)
 router.route("/addCycle").post(auth(),validate(activityValidation.addCycle),activityController.addCycle)
 router.route("/getCycle").get(auth(),activityController.getCycleData)
+router.route("/setGoal").post(auth(),validate(activityValidation.setGoal),activityController.addGoal)
+router.route("/getGoal").get(auth(),activityController.getGoalById)
 
 module.exports = router;

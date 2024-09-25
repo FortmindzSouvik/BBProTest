@@ -39,6 +39,11 @@ const devRoutes = [
     path: '/connection',
     route:connectionRoute
 
+  },
+  {
+    path: '/cms',
+    route:cmsRoute
+
   }
 ];
 

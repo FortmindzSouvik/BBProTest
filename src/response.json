@@ -1,0 +1,20 @@
+{
+    "SUCCESS":"Success!",
+    "FAIL":"Fail!",
+    "SIGNUP_SUCCESS":"You Have Successfully Registered!",
+    "LOGIN_SUCCESS":"You Have Successfully LoggedIn!",
+    "WATER_ADD":"Water added successfully!",
+    "STEP_ADD":"Step added successfully!",
+    "WORKOUT_ADD":"Workout added successfully!",
+    "WEIGHT_ADD":"Weight added successfully!",
+"SLEEP_ADD":"Sleep added successfully",
+    "LOGIN_FAIL":"Invalid email or password",
+    "PASSWORD_CREATION_FAIL":"Password creation failed",
+    "PASSWORD_CREATION":"Password created successfully",
+    "MEAL_ADD":"Meal added successfully",
+    "ACOUNT_DELETE_FAIL":"Incorrect password",
+
+    "LOGOUT_SUCCESS":"You Have Successfully Logout!",
+    "EMAIL_VERIFY_SUCCESS":"Email Verified Successfully!"
+  }
+  

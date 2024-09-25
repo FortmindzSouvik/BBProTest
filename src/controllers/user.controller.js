@@ -1,8 +1,10 @@
 const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
+const ApiSuccess = require('../utils/ApiSuccess');
+const respMessage = require('../response.json');
 const catchAsync = require('../utils/catchAsync');
-const { userService ,tokenService} = require('../services');
+const { authService,userService ,tokenService} = require('../services');
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -26,22 +28,11 @@ const addUserData = catchAsync(async (req, res) => {
     }
     await userService.updateUserById(findUser._id,updateData);
     let user = await userService.getUserById(req.body.id)
-    res
-    .status(httpStatus.CREATED)
-    .send({
-      code: httpStatus.CREATED,
-      message: 'You have added your data',
-      isSuccess: true,
-      data:user,
-      accessToken: tokens.access.token,
-      refreshToken: tokens.refresh.token,
-    });
+    new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,user,tokens);
+   
   }else{
-    res.send({
-    code: 422,
-    message: 'Email is not verified',
-    isSuccess: false,
-    })
+    throw new ApiError(httpStatus.NOT_FOUND, 'Email is not verified');
+
   }
 
 });
@@ -61,12 +52,7 @@ const uploadCertificate = catchAsync(async (req, res) => {
   // Use the mv() method to place the file somewhere on your server
   sampleFile.mv(`public/${file_name}`,async function (err) {
     if (err) {
-      res.send({
-        code: 422,
-        message: 'Failed to upload certificate',
-        isSuccess: false,
-        error:err
-        })
+    throw new ApiError(httpStatus.NOT_FOUND, 'Failed to upload certificate');
     } else {
       let findUser = await userService.getUserById(req.body.id)
       if(findUser){
@@ -75,18 +61,24 @@ const uploadCertificate = catchAsync(async (req, res) => {
           
         }
         await userService.addCertification(findUser._id,updateData);
-        res
-        .status(httpStatus.CREATED)
-        .send({
-          code: httpStatus.CREATED,
-          message: 'You have added your data',
-          isSuccess: true,
-        });
+    new ApiSuccess(res, httpStatus.CREATED, respMessage.SUCCESS);
 
       }
     }
   });
 
+});
+const deleteAccount = catchAsync(async (req, res) => {
+  let comparePassword =await authService.checkPassword({_id:req.user._id}, req.body.password)
+  if(comparePassword){
+    const user = await userService.updateUserById(req.user._id, {isdeleted:true})
+    new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS);
+
+  }else{
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.ACOUNT_DELETE_FAIL);
+
+  }
+ 
 });
 const getUsers = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
@@ -120,5 +112,6 @@ module.exports = {
   updateUser,
   deleteUser,
   addUserData,
-  uploadCertificate
+  uploadCertificate,
+  deleteAccount
 };
