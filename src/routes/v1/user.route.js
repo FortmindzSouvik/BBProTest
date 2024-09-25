@@ -12,6 +12,7 @@ router
   .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
   router.post('/addUserData',  validate(userValidation.addUserData), userController.addUserData);
   router.post('/uploadCertificate',validate(userValidation.addcertificate), userController.uploadCertificate);
+  router.post('/deleteAccount',auth(),validate(userValidation.deleteAccount), userController.deleteAccount);
 router
   .route('/:userId')
   .get(auth('getUsers'), validate(userValidation.getUser), userController.getUser)

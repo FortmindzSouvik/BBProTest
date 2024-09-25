@@ -1,5 +1,8 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
+const ApiSuccess = require('../utils/ApiSuccess');
+const ApiError = require('../utils/ApiError');
+const respMessage = require('../response.json');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 const bcrypt = require("bcrypt")
@@ -7,7 +10,6 @@ const { authService, userService, tokenService, emailService } = require('../ser
 
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
- ;
   // Create an email object
   const otp = Math.floor(100000 + Math.random() * 900000); 
   const msg = {
@@ -22,27 +24,11 @@ const register = catchAsync(async (req, res) => {
     .then(async() => {
       const updateUser = await userService.updateUserById(user._id,{otp:otp})
       const tokens = await tokenService.generateAuthTokens(user);
-      res
-    .status(httpStatus.CREATED)
-    .send({
-      code: 201,
-      message: 'We have sent a verification code to your email for verification',
-      isSuccess: true,
-      data:user,
-      // accessToken: tokens.access.token,
-      // refreshToken: tokens.refresh.token,
-    });
+      new ApiSuccess(res, httpStatus.OK, respMessage.SIGNUP_SUCCESS, user);
     })
     .catch((error) => {
-      res.send({
-        code: 422,
-      message: 'Failed to send mail',
-      isSuccess: false,
-      // data:user,
-      // accessToken: tokens.access.token,
-      // refreshToken: tokens.refresh.token,
-      })
-      console.error('Error sending email: ', error);
+      throw new ApiError(httpStatus.BAD_GATEWAY, respMessage.FAIL);
+     
     });
   
 
@@ -56,20 +42,9 @@ const login = catchAsync(async (req, res) => {
   // const isMatch = await bcrypt.compare(password, user.password);
   if(user){
     const tokens = await tokenService.generateAuthTokens(user);
-    res.send({  code: 201,
-      message: 'Login successfully',
-      isSuccess: true,
-      data:user,
-      accessToken: tokens.access.token,
-      refreshToken: tokens.refresh.token,});
+    new ApiSuccess(res, httpStatus.OK, respMessage.LOGIN_SUCCESS, user, tokens);
   }else{
-    res.send({  code: 422,
-      message: 'Invalid email or password',
-      isSuccess: false,
-      // data:user,
-      // accessToken: tokens.access.token,
-      // refreshToken: tokens.refresh.token,
-    });
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.LOGIN_FAIL);
   }
  
 });
@@ -80,23 +55,10 @@ const createPassword = catchAsync(async (req, res) => {
   findUser.password = await  password
  let savePassword =  await findUser.save()
 if(savePassword){
-  res.send({
-    code: 201,
-  message: 'Password created successfully',
-  isSuccess: true,
-  // data:user,
-  // accessToken: tokens.access.token,
-  // refreshToken: tokens.refresh.token,
-  })
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.PASSWORD_CREATION);
 }else{
-  res.send({
-    code: 422,
-  message: 'Password creation failed',
-  isSuccess: false,
-  // data:user,
-  // accessToken: tokens.access.token,
-  // refreshToken: tokens.refresh.token,
-  })
+  throw new ApiError(httpStatus.NOT_FOUND, respMessage.PASSWORD_CREATION_FAIL);
+ 
 }
   
 });
@@ -124,35 +86,13 @@ const forgotPassword = catchAsync(async (req, res) => {
     sgMail
       .send(msg).then(async()=>{
         const updateUser = await userService.updateUserById(findUser._id,{otp:otp,isEmailVerified:false})
-        res
-      .status(httpStatus.CREATED)
-      .send({
-        code: 201,
-        message: 'We have sent a verification code to your email for verification',
-        isSuccess: true,
-        data:findUser,
-        // accessToken: tokens.access.token,
-        // refreshToken: tokens.refresh.token,
-      });
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.SUCCESS,findUser);
       }).catch((error)=>{
-        res.send({
-          code: 422,
-        message: 'No user found',
-        isSuccess: false,
-        error:error,
-        // accessToken: tokens.access.token,
-        // refreshToken: tokens.refresh.token,
-        })
+  throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
       })
   }else{
-    res.send({
-      code: 422,
-    message: 'No user found',
-    isSuccess: false,
-    // data:user,
-    // accessToken: tokens.access.token,
-    // refreshToken: tokens.refresh.token,
-    })
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+    
   }
   
   // const resetPasswordToken = await tokenService.generateResetPasswordToken(req.body.email);
@@ -164,25 +104,9 @@ const resetPassword = catchAsync(async (req, res) => {
   let findUser = await userService.getUserById(req.body.id)
   if(findUser.isEmailVerified==true){
     await userService.updateUserById(findUser._id, { password: req.body.password });
-    res
-    .status(httpStatus.CREATED)
-    .send({
-      code: 201,
-      message: 'You have successfully reset your password',
-      isSuccess: true,
-      data:findUser,
-      // accessToken: tokens.access.token,
-      // refreshToken: tokens.refresh.token,
-    });
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.SUCCESS,findUser);
   }else{
- res.send({
-      code: 422,
-    message: 'Email is not verified',
-    isSuccess: false,
-    // data:user,
-    // accessToken: tokens.access.token,
-    // refreshToken: tokens.refresh.token,
-    })
+    throw new ApiError(httpStatus.UNAUTHORIZED, respMessage.FAIL);
   }
   // await authService.resetPassword(req.query.token, req.body.password);
   // res.status(httpStatus.NO_CONTENT).send();
@@ -198,17 +122,10 @@ const verifyEmail = catchAsync(async (req, res) => {
   let findUserOtp = await userService.getUserById(req.body.id)
   if(findUserOtp.otp==req.body.otp){
     await userService.updateUserById(req.body.id, { isEmailVerified: true });
-    res.send({
-      code:201,
-    message: 'OTP verified successfully',
-    isSuccess: true,
-    })
+  new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS);
+
   }else{
-    res.send({
-      code:422,
-    message: 'Please enter a valid otp',
-    isSuccess: false,
-    })
+    throw new ApiError(httpStatus.BAD_REQUEST, respMessage.FAIL);
   }
 });
 

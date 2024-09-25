@@ -9,23 +9,17 @@ const substanceSchema = mongoose.Schema(
       type: String,
       default:""
     },
-    dosage:{
-      type: String,
-      default:""
-    },
-    serving:{
-        type:Number,
-        default: 0
-    },
+    // dosage:{
+    //   type: String,
+    //   default:""
+    // },
+  
     halfLife:{
-       type: String,
-      default:""
+       type: Number,
+      default:0
     },
-    frequency:{
-        type:Number,
-        default: 0
-    },
-    user_id:{type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'User' },
+    
+    user_id:{type: mongoose.Schema.Types.ObjectId, required: true,ref:'User' },
     
   },
   {

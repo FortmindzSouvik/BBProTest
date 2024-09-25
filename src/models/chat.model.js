@@ -4,8 +4,8 @@ const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
 const chatSchema = mongoose.Schema(
   {
-    sender_id: {type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'User' },
-    reciver_id:{type: mongoose.Schema.Types.ObjectId, required: true, default: null,ref:'User' },
+    sender_id: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'User' },
+    reciver_id:{type: mongoose.Schema.Types.ObjectId, required: true, ref:'User' },
     is_read: {
         type: Boolean,
         default:false

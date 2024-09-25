@@ -29,7 +29,7 @@ const sendInvitationToCoach = catchAsync(async (req, res) => {
                             res
                             .status(httpStatus.CREATED)
                             .send({
-                              code: 201,
+                              code: httpStatus.CREATED,
                               message: 'Invitation sent',
                               isSuccess: true,
                               data:saveInvitationData,
@@ -84,7 +84,7 @@ const ivitationList =  catchAsync(async (req, res) => {
         res
                             .status(httpStatus.CREATED)
                             .send({
-                              code: 201,
+                              code: httpStatus.CREATED,
                               message: 'Invitation list',
                               isSuccess: true,
                               data:findInvitation,
@@ -118,7 +118,7 @@ const clientList =  catchAsync(async (req, res) => {
         res
                             .status(httpStatus.CREATED)
                             .send({
-                              code: 201,
+                              code: httpStatus.CREATED,
                               message: 'Client list',
                               isSuccess: true,
                               data:findInvitation,
@@ -146,7 +146,7 @@ const clientList =  catchAsync(async (req, res) => {
         const findInvitation = await connectionService.inviteData({_id:req.body.id})
         return res.status(httpStatus.CREATED)
         .send({
-          code: 201,
+          code: httpStatus.CREATED,
           message: 'Invitation accepted',
           isSuccess: true,
           data:findInvitation,
@@ -156,7 +156,7 @@ const clientList =  catchAsync(async (req, res) => {
         const findInvitation = await connectionService.inviteData({_id:req.body.id})
         return res.status(httpStatus.CREATED)
         .send({
-          code: 201,
+          code: httpStatus.CREATED,
           message: 'Invitation rejected',
           isSuccess: true,
           data:findInvitation,
@@ -179,7 +179,7 @@ const coachList =  catchAsync(async (req, res) => {
         res
                             .status(httpStatus.CREATED)
                             .send({
-                              code: 201,
+                              code: httpStatus.CREATED,
                               message: 'Coach list',
                               isSuccess: true,
                               data:findInvitation,

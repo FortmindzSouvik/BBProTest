@@ -1,8 +1,12 @@
 const catchAsync = require('../utils/catchAsync');
+const ApiSuccess = require('../utils/ApiSuccess');
+const ApiError = require('../utils/ApiError');
+const respMessage = require('../response.json');
+const httpStatus = require('http-status');
 const { activityService } = require('../services');
 const currentDate = new Date();
 const moment = require('moment');
-const { Food, Water, Step, WorkOut, Weight, Sleep } = require('../models');
+const { Food, Water, Step, WorkOut, Weight, Sleep,Substance, Goal } = require('../models');
 
 // Helper function to check if a date is today
 const isToday = (date) => {
@@ -34,23 +38,10 @@ const addMeal = catchAsync(async (req, res) => {
   inputData.user_id = await req.user._id;
   const addMeal = await activityService.addMeal(inputData);
   if (addMeal) {
-    res.send({
-      code: 201,
-      message: 'Meal added successfully',
-      isSuccess: true,
-      data: addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.MEAL_ADD,addMeal);
+   
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to add meal',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+  throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
   }
 });
 const getMealList = catchAsync(async (req, res) => {
@@ -76,41 +67,21 @@ const getMealList = catchAsync(async (req, res) => {
     const monthlyMeals = getMeal.filter((meal) => isThisMonth(meal.time));
 
     // Return filtered data
-    res.send({
-      code: 201,
-      message: 'Meal list',
-      isSuccess: true,
-      data: {
-        dailyMeals,
-        weeklyMeals,
-        monthlyMeals,
-      },
-      totalPages: totalPages,
-      currentPage: page,
-    });
+    new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,{dailyMeals,
+      weeklyMeals,
+      monthlyMeals},"",totalPages,page);
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to get meal',
-      isSuccess: false,
-    });
+  throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
   }
 });
 const getMealById = catchAsync(async(req,res)=>{
     const data = await activityService.getById(Food,{_id:req.query.id})
     if(data){
-        res.send({
-            code: 201,
-            message: 'Data',
-            isSuccess: true,
-            data:data,
-          });
+  new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,data);
+      
     }else{
-        res.send({
-            code: 422,
-            message: 'Failed to get data',
-            isSuccess: false,
-          });
+  throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
     }
 })
 
@@ -120,23 +91,10 @@ const addWater = catchAsync(async (req, res) => {
   inputData.user_id = await req.user._id;
   const addWater = await activityService.addWater(inputData);
   if (addWater) {
-    res.send({
-      code: 201,
-      message: 'Water added successfully',
-      isSuccess: true,
-      data: addWater,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.WATER_ADD,addWater);
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to add water',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+  throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
   }
 });
 const getWaterList = catchAsync(async (req, res) => {
@@ -155,114 +113,55 @@ const getWaterList = catchAsync(async (req, res) => {
     const dailyWater = getWater.filter((water) => isToday(water.time));
     const weeklyWater = getWater.filter((water) => isThisWeek(water.time));
     const monthlyWater = getWater.filter((water) => isThisMonth(water.time));
-    res.send({
-      code: 201,
-      message: 'Water list',
-      isSuccess: true,
-      data: {
-        dailyWater,
-        weeklyWater,
-        monthlyWater,
-      },
-      totalPages: totalPages,
-      currentPage: page,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,{
+      dailyWater,
+      weeklyWater,
+      monthlyWater,
+    },"",totalPages,page);
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to get water',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+  throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
   }
 });
 const getWaterById = catchAsync(async(req,res)=>{
     const data = await activityService.getById(Water,{_id:req.query.id})
     if(data){
-        res.send({
-            code: 201,
-            message: 'Data',
-            isSuccess: true,
-            data:data,
-          });
+      new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,data);
     }else{
-        res.send({
-            code: 422,
-            message: 'Failed to get data',
-            isSuccess: false,
-          });
+          throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
     }
 })
 const getStepById = catchAsync(async(req,res)=>{
     const data = await activityService.getById(Step,{_id:req.query.id})
     if(data){
-        res.send({
-            code: 201,
-            message: 'Data',
-            isSuccess: true,
-            data:data,
-          });
+      new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,data);
     }else{
-        res.send({
-            code: 422,
-            message: 'Failed to get data',
-            isSuccess: false,
-          });
+          throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
     }
 })
 const getWorkoutById = catchAsync(async(req,res)=>{
     const data = await activityService.getById(WorkOut,{_id:req.query.id})
     if(data){
-        res.send({
-            code: 201,
-            message: 'Data',
-            isSuccess: true,
-            data:data,
-          });
+      new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,data);
     }else{
-        res.send({
-            code: 422,
-            message: 'Failed to get data',
-            isSuccess: false,
-          });
+          throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
     }
 })
 const getWeightById= catchAsync(async(req,res)=>{
     const data = await activityService.getById(Weight,{_id:req.query.id})
     if(data){
-        res.send({
-            code: 201,
-            message: 'Data',
-            isSuccess: true,
-            data:data,
-          });
+      new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,data);
     }else{
-        res.send({
-            code: 422,
-            message: 'Failed to get data',
-            isSuccess: false,
-          });
+          throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
     }
 })
 const getSleepById= catchAsync(async(req,res)=>{
     const data = await activityService.getById(Sleep,{_id:req.query.id})
     if(data){
-        res.send({
-            code: 201,
-            message: 'Data',
-            isSuccess: true,
-            data:data,
-          });
+      new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,data);
     }else{
-        res.send({
-            code: 422,
-            message: 'Failed to get data',
-            isSuccess: false,
-          });
+          throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
     }
 })
 const addStep = catchAsync(async (req, res) => {
@@ -271,23 +170,9 @@ const addStep = catchAsync(async (req, res) => {
   inputData.user_id = await req.user._id;
   const addStep = await activityService.addStep(inputData);
   if (addStep) {
-    res.send({
-      code: 201,
-      message: 'Step added successfully',
-      isSuccess: true,
-      data: addStep,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.STEP_ADD,addStep);
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to add step',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
   }
 });
 
@@ -307,29 +192,13 @@ const getStepList = catchAsync(async (req, res) => {
 
     // Calculate total pages
     const totalPages = Math.ceil(totalCount / limit);
-    res.send({
-      code: 201,
-      message: 'Step list',
-      isSuccess: true,
-      data: {
-        dailyStep,
+    new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,{
+      dailyStep,
         weeklyStep,
         monthlyStep,
-      },
-      totalPages: totalPages,
-      currentPage: page,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    },"",totalPages,page);
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to get step',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
   }
 });
 const addWorkOut = catchAsync(async (req, res) => {
@@ -338,23 +207,11 @@ const addWorkOut = catchAsync(async (req, res) => {
   inputData.user_id = await req.user._id;
   const addWorkOut = await activityService.addWorkOut(inputData);
   if (addWorkOut) {
-    res.send({
-      code: 201,
-      message: 'Workout added successfully',
-      isSuccess: true,
-      data: addWorkOut,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.WORKOUT_ADD,addWorkOut);
+
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to add workout',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
   }
 });
 const getWorkOut = catchAsync(async (req, res) => {
@@ -372,29 +229,14 @@ const getWorkOut = catchAsync(async (req, res) => {
 
     // Calculate total pages
     const totalPages = Math.ceil(totalCount / limit);
-    res.send({
-      code: 201,
-      message: 'Workout list',
-      isSuccess: true,
-      data: {
-        dailyWorkOut,
-        weeklyWorkOut,
-        monthlyWorkOut,
-      },
-      totalPages: totalPages,
-      currentPage: page,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,{
+      dailyWorkOut,
+      weeklyWorkOut,
+      monthlyWorkOut,
+    },"",totalPages,page);
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to get workout',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
   }
 });
 const addWeight = catchAsync(async (req, res) => {
@@ -403,23 +245,9 @@ const addWeight = catchAsync(async (req, res) => {
   inputData.user_id = await req.user._id;
   const addWeight = await activityService.addWeight(inputData);
   if (addWeight) {
-    res.send({
-      code: 201,
-      message: 'Weight added successfully',
-      isSuccess: true,
-      data: addWeight,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.WEIGHT_ADD,addWeight);
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to add weight',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
   }
 });
 const getWeight = catchAsync(async (req, res) => {
@@ -437,29 +265,14 @@ const getWeight = catchAsync(async (req, res) => {
 
     // Calculate total pages
     const totalPages = Math.ceil(totalCount / limit);
-    res.send({
-      code: 201,
-      message: 'Weight list',
-      isSuccess: true,
-      data: {
-        dailyWeight,
+    new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,{
+      dailyWeight,
         weeklyWeight,
         monthlyWeight,
-      },
-      totalPages: totalPages,
-      currentPage: page,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    },"",totalPages,page);
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to get weight',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
   }
 });
 const addSleep = catchAsync(async (req, res) => {
@@ -468,23 +281,9 @@ const addSleep = catchAsync(async (req, res) => {
   inputData.user_id = await req.user._id;
   const sleep = await activityService.addSleep(inputData);
   if (sleep) {
-    res.send({
-      code: 201,
-      message: 'Sleep added successfully',
-      isSuccess: true,
-      data: sleep,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.SLEEP_ADD,sleep);
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to add sleep',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
   }
 });
 const getSleep = catchAsync(async (req, res) => {
@@ -502,29 +301,13 @@ const getSleep = catchAsync(async (req, res) => {
 
     // Calculate total pages
     const totalPages = Math.ceil(totalCount / limit);
-    res.send({
-      code: 201,
-      message: 'Sleep list',
-      isSuccess: true,
-      data: {
-        dailySleep,
-        weeklySleep,
-        monthlySleep,
-      },
-      totalPages: totalPages,
-      currentPage: page,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,{
+      dailySleep,
+      weeklySleep,
+      monthlySleep,
+    },"",totalPages,page);
   } else {
-    res.send({
-      code: 422,
-      message: 'Failed to get sleep',
-      isSuccess: false,
-      // "data":addMeal,
-      // "accessToken": tokens.access.token,
-      // "refreshToken": tokens.refresh.token
-    });
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
   }
 });
 const getProcessData = catchAsync(async (req, res) => {
@@ -622,20 +405,14 @@ console.log()
     durationInMinutes += durationMinutes;
   });
 
-
-    res.send({
-      code: 201,
-      message: 'Process data',
-      isSuccess: true,
-      data: {
-        totalCalories:totalCalories,
-        totalSteps:totalSteps,
-        totalWater:totalWater,
-        workOutTotalDurationMinutes:totalDurationMinutes,
-        latestWeight:latestWeight,
-        sleepDuration:durationInMinutes
-      },
-    });
+  new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,{
+    totalCalories:totalCalories,
+    totalSteps:totalSteps,
+    totalWater:totalWater,
+    workOutTotalDurationMinutes:totalDurationMinutes,
+    latestWeight:latestWeight,
+    sleepDuration:durationInMinutes
+  });
   
 });
 const dashboard = catchAsync(async (req, res) => {
@@ -744,78 +521,200 @@ const monthlyWeight = getWeight.filter((weight) => isThisMonth(weight.time));
 
 
 
+new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,{
+  dailyData:{
+    meal:{
+      totalCalories:mealData(dailyMeals),
+    },
+    water:{
+      totalWater:waterData(dailyWater),
+    },
+    step:{
+      totalSteps:stepData(dailyStep)
+    },
+    workOut:{
+      workOutTotalDurationMinutes:workOutData(dailyWorkOut),
+      workOutData:dailyWorkOut
+    },
+    weight:{
+      weightData:dailyWeight
+    }
+  },
+  weeklyData:{
+    meal:{
+      totalCalories:mealData(weeklyMeals),
+    },
+    water:{
+      totalWater:waterData(weeklyWater),
+    },
+    step:{
+      totalSteps:stepData(weeklyStep)
+    },
+    workOut:{
+      workOutTotalDurationMinutes:workOutData(weeklyWorkOut),
+      workOutData:weeklyWorkOut
+    },
+    weight:{
+      weightData:weeklyWeight
+    }
+  },
+  monthlyData:{
+    meal:{
+      totalCalories:mealData(monthlyMeals),
+    },
+    water:{
+      totalWater:waterData(monthlyWater),
+    },
+    step:{
+      totalSteps:stepData(monthlyStep)
+    },
+    workOut:{
+      workOutTotalDurationMinutes:workOutData(monthlyWorkOut),
+      workOutData:monthlyWorkOut
+    },
+    weight:{
+      weightData:monthlyWeight
+    }
+  },
+});
 
-
-
-    res.send({
-      code: 201,
-      message: 'Dashboard Data',
-      isSuccess: true,
-      data: {
-        dailyData:{
-          meal:{
-            totalCalories:mealData(dailyMeals),
-          },
-          water:{
-            totalWater:waterData(dailyWater),
-          },
-          step:{
-            totalSteps:stepData(dailyStep)
-          },
-          workOut:{
-            workOutTotalDurationMinutes:workOutData(dailyWorkOut),
-            workOutData:dailyWorkOut
-          },
-          weight:{
-            weightData:dailyWeight
-          }
-        },
-        weeklyData:{
-          meal:{
-            totalCalories:mealData(weeklyMeals),
-          },
-          water:{
-            totalWater:waterData(weeklyWater),
-          },
-          step:{
-            totalSteps:stepData(weeklyStep)
-          },
-          workOut:{
-            workOutTotalDurationMinutes:workOutData(weeklyWorkOut),
-            workOutData:weeklyWorkOut
-          },
-          weight:{
-            weightData:weeklyWeight
-          }
-        },
-        monthlyData:{
-          meal:{
-            totalCalories:mealData(monthlyMeals),
-          },
-          water:{
-            totalWater:waterData(monthlyWater),
-          },
-          step:{
-            totalSteps:stepData(monthlyStep)
-          },
-          workOut:{
-            workOutTotalDurationMinutes:workOutData(monthlyWorkOut),
-            workOutData:monthlyWorkOut
-          },
-          weight:{
-            weightData:monthlyWeight
-          }
-        },
-        // totalCalories:totalCalories,
-        // totalSteps:totalSteps,
-        // totalWater:totalWater,
-        // workOutTotalDurationMinutes:totalDurationMinutes,
-        // latestWeight:latestWeight,
-        // sleepDuration:durationInMinutes
-      },
-    });
   
 });
+
+const addSubstance = catchAsync(async (req, res) => {
+  // console.log(req.user,"0000000000000000")
+  let inputData = await req.body;
+  inputData.user_id = await req.user._id;
+  const addSubstance = await activityService.addSubstance(inputData);
+  if (addSubstance) {
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.SUCCESS,addSubstance);
+
+  } else {
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
+  }
+});
+const getSubstance = catchAsync(async (req, res) => {
+  const substance = await activityService.getSubstanceByUserId({ user_id: req.user._id });
+  if (substance) {
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.SUCCESS,substance);
+  
+  } else {
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
+  }
+});
+const addCycle = catchAsync(async (req, res) => {
+  // console.log(req.user,"0000000000000000")
+  let inputData = await req.body;
+  inputData.user_id = await req.user._id;
+  const addCycle = await activityService.addCycle(inputData);
+  if (addCycle) {
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.SUCCESS,addCycle);
+  } else {
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+  }
+});
+const getCycleData = catchAsync(async (req, res) => {
+  const cycle = await activityService.getCycleByUserId({ user_id: req.user._id });
+  if (cycle) {
+    const calculateRemainingSubstance = (initialDosage, hours, halfLife) => {
+      return initialDosage * Math.pow(0.5, hours / halfLife);
+    };
+    var finalData =[]
+    for (const singleCycle of cycle) {
+      const substance = await activityService.getById(Substance,{_id: singleCycle.substanceId });
+
+      
+      const halfLife = substance.halfLife; 
+      const dosage = singleCycle.dosage;
+      const frequency = singleCycle.frequency;
+      const servingPeriod = singleCycle.serving; 
+      const startTime = new Date(singleCycle.time);
+
+      const timePeriodMap = {
+        'one_week': 7 * 24,
+        'two_weeks': 14 * 24,
+        'three_weeks': 21 * 24,
+        'one_month': 30 * 24,
+      };
+
+      const totalServingHours = timePeriodMap[servingPeriod];
+      const frequencyMap = {
+        'one_hour': 1,
+        'three_hours': 3,
+        'six_hours': 6,
+        'twelve_hours': 12,
+        'one_day': 24,
+        'two_days': 48,
+        'three_days': 72,
+        'one_week': 168,
+        'two_weeks': 336,
+        'three_weeks': 504,
+        'one_month': 720,
+      };
+
+      const frequencyHours = frequencyMap[frequency];
+
+      let timeData = [];
+      let currentHour = 0;
+      let remainingSubstance = 0;
+
+     while (currentHour <= totalServingHours + 72) {  
+        
+        remainingSubstance = calculateRemainingSubstance(remainingSubstance, 1, halfLife);
+  
+       
+        if (currentHour <= totalServingHours && currentHour % frequencyHours == 0) {
+          remainingSubstance += dosage;
+        }
+        timeData.push({
+          time: new Date(startTime.getTime() + currentHour * 60 * 60 * 1000), 
+          remainingSubstance: Math.max(0, remainingSubstance), 
+        });
+  
+        currentHour++;
+      }
+     await finalData.push({
+name:substance.name,
+data:timeData
+})
+    }
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.SUCCESS,finalData);
+
+  } else {
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
+  }
+});
+const addGoal = catchAsync(async (req, res) => {
+  // console.log(req.user,"0000000000000000")
+  let inputData = await req.body;
+  inputData.user_id = await req.user._id;
+  const data = await activityService.getById(Goal,{user_id:req.user._id})
+  if (!data) {
+
+    const addGoal = await activityService.addGoal(inputData);
+  if (addGoal) {
+  new ApiSuccess(res, httpStatus.CREATED, respMessage.SUCCESS,addGoal);
+  } else {
+    throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+  }
+    }else{
+      const editGoal = await activityService.updateGoalById({_id:data._id},inputData);
+      new ApiSuccess(res, httpStatus.CREATED, respMessage.SUCCESS,data);
+    }
+  
+});
+const getGoalById = catchAsync(async(req,res)=>{
+  const data = await activityService.getById(Goal,{user_id:req.user._id})
+  if(data){
+    new ApiSuccess(res, httpStatus.OK, respMessage.SUCCESS,data);
+  }else{
+        throw new ApiError(httpStatus.NOT_FOUND, respMessage.FAIL);
+
+  }
+})
 module.exports = {
   addMeal,
   getMealList,
@@ -836,5 +735,11 @@ module.exports = {
   getWeightById,
   getSleepById,
   getProcessData,
-  dashboard
+  dashboard,
+  addSubstance,
+  getSubstance,
+  addCycle,
+  getCycleData,
+  addGoal,
+  getGoalById
 };

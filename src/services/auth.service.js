@@ -4,6 +4,7 @@ const userService = require('./user.service');
 const Token = require('../models/token.model');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
+const { User } = require('../models');
 
 /**
  * Login with username and password
@@ -13,12 +14,18 @@ const { tokenTypes } = require('../config/tokens');
  */
 const loginUserWithEmailAndPassword = async (email, password) => {
   const user = await userService.getUserByEmail(email);
-  if (!user || !(await user.isPasswordMatch(password))||(user.isEmailVerified==false)) {
+  if (!user || !(await user.isPasswordMatch(password))||(user.isEmailVerified==false)||(user.isdeleted==true)) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
   return user;
 };
-
+const checkPassword = async (id, password) => {
+  const user = await User.findOne(id);
+  if (!(await user.isPasswordMatch(password))) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect  password');
+  }
+  return user;
+};
 /**
  * Logout
  * @param {string} refreshToken
@@ -96,4 +103,5 @@ module.exports = {
   refreshAuth,
   resetPassword,
   verifyEmail,
+  checkPassword
 };
